@@ -1,12 +1,4 @@
-/**
- * StayFinder Central Data Store & Authentication System
- * Connects Frontend UI to Node.js Express & MySQL Database Backend
- * API Endpoint: http://localhost:5000/api
- */
-
-const API_BASE = (typeof window !== 'undefined' && window.location && window.location.origin && window.location.origin.startsWith('http') && window.location.port === '5000')
-    ? '/api'
-    : 'http://localhost:5000/api';
+const API_BASE = 'https://stayfinder-ln63.onrender.com/api';
 
 const DEFAULT_PROPERTIES = [];
 const DEFAULT_BOOKINGS = [];
