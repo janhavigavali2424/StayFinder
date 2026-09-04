@@ -498,26 +498,52 @@ class StayFinderStore {
     /**
      * Admin: Approve or Reject Booking
      */
-    async updateBookingStatusApi(bookingId, status, roomNumber, keyPass) {
-        try {
-            const res = await fetch(`${API_BASE}/admin/bookings/${bookingId}/status`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ status, roomNumber, keyPass })
-            });
-            const data = await res.json();
-            if (status === 'approved') this.approveBooking(bookingId, roomNumber, keyPass);
-            else this.rejectBooking(bookingId);
-            window.dispatchEvent(new Event('stayfinder-data-changed'));
-            return data;
-        } catch (err) {
-            if (status === 'approved') this.approveBooking(bookingId, roomNumber, keyPass);
-            else this.rejectBooking(bookingId);
-            window.dispatchEvent(new Event('stayfinder-data-changed'));
-            return { success: true, message: `Booking #${bookingId} status updated locally to ${status}` };
-        }
-    }
+   async updateBookingStatusApi(bookingId, status, roomNumber, keyPass) {
+    try {
+        const res = await fetch(`${API_BASE}/admin/bookings/${bookingId}/status`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                status,
+                roomNumber,
+                keyPass
+            })
+        });
 
+        const data = await res.json();
+
+        // Database update failed
+        if (!res.ok || !data.success) {
+            console.error('Booking status update failed:', data);
+
+            return {
+                success: false,
+                message: data.message || `Failed to update booking #${bookingId}`
+            };
+        }
+
+        // Database update successful
+        if (status === 'approved') {
+            this.approveBooking(bookingId, roomNumber, keyPass);
+        } else {
+            this.rejectBooking(bookingId);
+        }
+
+        window.dispatchEvent(new Event('stayfinder-data-changed'));
+
+        return data;
+
+    } catch (err) {
+        console.error('Booking API error:', err);
+
+        return {
+            success: false,
+            message: `Unable to update booking in database: ${err.message}`
+        };
+    }
+}
     /**
      * Admin: Delete Property from DB & Local Store
      */

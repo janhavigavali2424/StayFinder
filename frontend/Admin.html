@@ -843,21 +843,45 @@
             renderAllQueues();
         }
 
-        async function handleApproveBooking(id) {
-            const defaultRoom = `Room #${Math.floor(101 + Math.random() * 400)} (Block A)`;
-            const defaultKey = `#${Math.floor(1000 + Math.random() * 9000)}`;
+async function handleApproveBooking(id) {
+    const defaultRoom = `Room #${Math.floor(101 + Math.random() * 400)} (Block A)`;
+    const defaultKey = `#${Math.floor(1000 + Math.random() * 9000)}`;
 
-            const roomNumber = prompt(`Assign Room Number for Booking ${id}:`, defaultRoom);
-            if (roomNumber === null) return; // Admin cancelled
+    const roomNumber = prompt(
+        `Assign Room Number for Booking ${id}:`,
+        defaultRoom
+    );
 
-            const keyPass = prompt(`Assign Digital Access Pass Key:`, defaultKey);
-            if (keyPass === null) return; // Admin cancelled
+    if (roomNumber === null) return;
 
-            const res = await window.stayfinderStore.updateBookingStatusApi(id, 'approved', roomNumber || defaultRoom, keyPass || defaultKey);
-            showToast(`✅ Room Allotted!`, `Booking ${id} approved & allocated (${roomNumber || defaultRoom}).`);
-            renderAllQueues();
-        }
+    const keyPass = prompt(
+        `Assign Digital Access Pass Key:`,
+        defaultKey
+    );
 
+    if (keyPass === null) return;
+
+    const res = await window.stayfinderStore.updateBookingStatusApi(
+        id,
+        'approved',
+        roomNumber || defaultRoom,
+        keyPass || defaultKey
+    );
+
+    if (res && res.success) {
+        showToast(
+            `✅ Room Allotted!`,
+            `Booking ${id} approved & allocated (${roomNumber || defaultRoom}).`
+        );
+
+        await renderAllQueues();
+    } else {
+        showToast(
+            `❌ Approval Failed`,
+            res?.message || `Booking ${id} could not be approved in the database.`
+        );
+    }
+}
         async function handleRejectBooking(id) {
             if (!confirm(`Are you sure you want to reject/decline booking ${id}?`)) return;
             const res = await window.stayfinderStore.updateBookingStatusApi(id, 'rejected');
