@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Global Admin Settings | Housing Admin</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#004ac6",
+                        "on-tertiary-container": "#ffede6",
+                        "on-tertiary-fixed": "#360f00",
+                        "tertiary-container": "#bc4800",
+                        "surface-container": "#eceef0",
+                        "tertiary-fixed-dim": "#ffb596",
+                        "on-tertiary": "#ffffff",
+                        "inverse-on-surface": "#eff1f3",
+                        "background": "#f7f9fb",
+                        "on-secondary-fixed": "#0f0069",
+                        "on-secondary-fixed-variant": "#3323cc",
+                        "error-container": "#ffdad6",
+                        "surface-container-lowest": "#ffffff",
+                        "surface": "#f7f9fb",
+                        "primary-fixed": "#dbe1ff",
+                        "on-primary-fixed": "#00174b",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed": "#e2dfff",
+                        "outline-variant": "#c3c6d7",
+                        "secondary-fixed-dim": "#c3c0ff",
+                        "tertiary-fixed": "#ffdbcd",
+                        "on-background": "#191c1e",
+                        "inverse-primary": "#b4c5ff",
+                        "on-primary-container": "#eeefff",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "error": "#ba1a1a",
+                        "on-secondary": "#ffffff",
+                        "secondary": "#4b41e1",
+                        "on-surface-variant": "#434655",
+                        "surface-container-highest": "#e0e3e5",
+                        "surface-tint": "#0053db",
+                        "surface-dim": "#d8dadc",
+                        "on-error-container": "#93000a",
+                        "surface-container-high": "#e6e8ea",
+                        "on-tertiary-fixed-variant": "#7d2d00",
+                        "on-error": "#ffffff",
+                        "surface-variant": "#e0e3e5",
+                        "secondary-container": "#645efb",
+                        "tertiary": "#943700",
+                        "surface-bright": "#f7f9fb",
+                        "on-secondary-container": "#fffbff",
+                        "surface-container-low": "#f2f4f6",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "on-surface": "#191c1e",
+                        "primary-container": "#2563eb",
+                        "inverse-surface": "#2d3133",
+                        "outline": "#737686"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "lg": "48px",
+                        "sm": "16px",
+                        "md": "24px",
+                        "margin-mobile": "16px",
+                        "base": "4px",
+                        "xl": "80px",
+                        "gutter": "24px",
+                        "margin-desktop": "64px",
+                        "xs": "8px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-md": ["Inter"],
+                        "display-lg-mobile": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+                        "display-lg-mobile": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 20px rgba(37, 99, 235, 0.05);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #c3c6d7;
+            border-radius: 10px;
+        }
+
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #004ac6;
+        }
+
+        .toggle-checkbox:checked+.toggle-label {
+            background-color: #2563eb;
+        }
+    </style>
+    <script src="stayfinder-store.js"></script>
+</head>
+
+<body class="bg-background text-on-surface font-body-md overflow-hidden">
+    <!-- Side Navigation Shell -->
+    <aside
+        class="h-screen w-64 fixed left-0 top-0 flex flex-col py-md px-sm border-r border-outline-variant shadow-sm bg-surface-container-lowest z-50">
+        <div class="mb-xl px-4">
+            <a href="Home.html" class="font-headline-sm text-headline-sm font-bold text-primary">System Settings</a>
+            <p class="text-label-sm font-label-sm text-on-surface-variant">StayFinder Platform</p>
+        </div>
+        <nav class="flex-1 space-y-xs">
+            <a class="admin-only-link hidden flex items-center gap-3 px-4 py-3 text-secondary font-bold hover:bg-surface-container-high transition-colors rounded-lg font-label-md text-label-md"
+                href="Admin.html">
+                <span class="material-symbols-outlined">fact_check</span>
+                Verification Queue
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-lg font-label-md text-label-md"
+                href="Home.html">
+                <span class="material-symbols-outlined">home</span>
+                Live Website
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-lg font-label-md text-label-md"
+                href="Registration.html">
+                <span class="material-symbols-outlined">add_box</span>
+                Register Property
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-lg font-label-md text-label-md"
+                href="Owner Dashboard.html">
+                <span class="material-symbols-outlined">real_estate_agent</span>
+                Owner Dashboard
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 bg-secondary-container text-on-secondary-container rounded-lg font-bold font-label-md text-label-md shadow-sm"
+                href="System Settings.html">
+                <span class="material-symbols-outlined">settings</span>
+                System Settings
+            </a>
+        </nav>
+        <div class="mt-auto pt-md border-t border-outline-variant">
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-lg"
+                href="#">
+                <span class="material-symbols-outlined">help_outline</span>
+                <span class="font-label-md text-label-md">Support</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-lg"
+                href="#">
+                <span class="material-symbols-outlined">logout</span>
+                <span class="font-label-md text-label-md">Logout</span>
+            </a>
+        </div>
+    </aside>
+    <!-- Top App Bar -->
+    <header
+        class="fixed top-0 right-0 left-64 h-16 flex justify-between items-center px-margin-desktop bg-white/70 backdrop-blur-md border-b border-white/20 z-40 shadow-sm">
+        <div class="flex items-center gap-xl">
+            <span class="font-headline-md text-headline-md font-extrabold text-primary">Housing Admin</span>
+            <nav class="hidden md:flex gap-md">
+                <a class="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md"
+                    href="#">Overview</a>
+                <a class="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md"
+                    href="#">Reports</a>
+                <a class="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md"
+                    href="#">Logs</a>
+            </nav>
+        </div>
+        <div class="flex items-center gap-md">
+            <button
+                class="p-2 rounded-full hover:bg-surface-container-high text-on-surface-variant transition-colors relative">
+                <span class="material-symbols-outlined">notifications</span>
+                <span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+            </button>
+            <button class="p-2 rounded-full hover:bg-surface-container-high text-on-surface-variant transition-colors">
+                <span class="material-symbols-outlined">apps</span>
+            </button>
+            <div class="h-8 w-8 rounded-full overflow-hidden border border-outline-variant">
+                <img class="w-full h-full object-cover"
+                    data-alt="A professional headshot of a senior administrator in a high-tech corporate office environment. The person is wearing a navy blue blazer and has a confident, approachable expression. The background is softly blurred, showing a modern glass-walled office with warm, natural afternoon sunlight streaming through, matching a premium, professional UI aesthetic."
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgUQ-YdIHGXGQTBFfyyqOa_9hmn90P2SBM5QqMOkCjWy44cy2TXhGMg7zGZYfmImWELA_fFwIhkE8p_LBdQHKHsm481_gs9TGeWDMAy76LtWGTDoPEAvMuh4ShMJMH5M7r9sPEHsa9iVfJSRUJphqufTFF-qg5T6g7_rqfpJdS9YB6oQXLmDFo9oenfOWQOsd4F2czPmXk7Rr5hStDQm7DOuvr9ki8uLuB0eYtl-sVFufx-DGEi6rG1w" />
+            </div>
+        </div>
+    </header>
+    <!-- Main Content Canvas -->
+    <main class="ml-64 pt-16 h-screen overflow-y-auto custom-scrollbar bg-surface-container-low">
+        <div class="max-w-[1280px] mx-auto px-margin-desktop py-lg">
+            <!-- Page Header -->
+            <div class="mb-lg flex justify-between items-end">
+                <div>
+                    <h2 class="font-display-lg text-display-lg text-on-surface mb-xs">Global Admin Settings</h2>
+                    <p class="text-body-lg font-body-lg text-on-surface-variant max-w-2xl">Configure platform-wide
+                        verification rules, regional review requirements, and automated communication templates.</p>
+                </div>
+                <button
+                    class="bg-primary hover:bg-primary/90 text-white px-md py-3 rounded-lg font-bold flex items-center gap-2 transition-all active:scale-[0.98]">
+                    <span class="material-symbols-outlined">save</span>
+                    Publish Changes
+                </button>
+            </div>
+            <!-- Bento Grid Layout -->
+            <div class="grid grid-cols-12 gap-gutter">
+                <!-- Section: Verification Thresholds -->
+                <section class="col-span-12 lg:col-span-7 glass-card rounded-[24px] p-md">
+                    <div class="flex items-center gap-3 mb-md">
+                        <div class="p-2 bg-primary/10 rounded-lg text-primary">
+                            <span class="material-symbols-outlined">auto_awesome</span>
+                        </div>
+                        <h3 class="font-headline-sm text-headline-sm">Verification Thresholds</h3>
+                    </div>
+                    <div class="space-y-sm">
+                        <div class="p-4 rounded-xl border border-outline-variant bg-surface-container-lowest/50">
+                            <div class="flex justify-between items-center mb-base">
+                                <label class="font-label-md text-label-md text-on-surface flex items-center gap-2">
+                                    Auto-Verification Confidence Score
+                                    <span class="material-symbols-outlined text-outline text-[16px] cursor-help"
+                                        title="Minimum AI confidence score required for instant approval without human intervention.">info</span>
+                                </label>
+                                <span class="font-bold text-primary">85%</span>
+                            </div>
+                            <input
+                                class="w-full h-2 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-primary"
+                                max="100" min="50" type="range" value="85" />
+                        </div>
+                        <div class="grid grid-cols-2 gap-sm">
+                            <div class="flex flex-col gap-2 p-4 rounded-xl border border-outline-variant">
+                                <label
+                                    class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Failed
+                                    Attempts Limit</label>
+                                <input
+                                    class="bg-transparent border-none text-headline-sm font-bold focus:ring-0 p-0 text-on-surface"
+                                    type="number" value="3" />
+                                <p class="text-[11px] text-outline">Max ID submission retries before permanent lockout.
+                                </p>
+                            </div>
+                            <div class="flex flex-col gap-2 p-4 rounded-xl border border-outline-variant">
+                                <label
+                                    class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Document
+                                    Expiry Grace</label>
+                                <input
+                                    class="bg-transparent border-none text-headline-sm font-bold focus:ring-0 p-0 text-on-surface"
+                                    type="text" value="30 Days" />
+                                <p class="text-[11px] text-outline">Extended validity for expired documents.</p>
+                            </div>
+                        </div>
+                        <div
+                            class="flex items-center justify-between p-4 rounded-xl bg-secondary/5 border border-secondary/20">
+                            <div class="flex items-center gap-4">
+                                <span class="material-symbols-outlined text-secondary">security</span>
+                                <div>
+                                    <h4 class="font-label-md text-label-md font-bold">Liveness Detection</h4>
+                                    <p class="text-label-sm text-on-surface-variant">Require real-time biometric
+                                        verification</p>
+                                </div>
+                            </div>
+                            <div
+                                class="relative inline-block w-12 h-6 transition duration-200 ease-in-out rounded-full">
+                                <input checked=""
+                                    class="toggle-checkbox absolute block w-6 h-6 bg-white border-4 rounded-full appearance-none cursor-pointer right-0 border-primary"
+                                    type="checkbox" />
+                                <label
+                                    class="toggle-label block h-6 overflow-hidden bg-primary rounded-full cursor-pointer"></label>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <!-- Section: Regional Review Settings -->
+                <section class="col-span-12 lg:col-span-5 glass-card rounded-[24px] p-md">
+                    <div class="flex items-center gap-3 mb-md">
+                        <div class="p-2 bg-tertiary/10 rounded-lg text-tertiary">
+                            <span class="material-symbols-outlined">public</span>
+                        </div>
+                        <h3 class="font-headline-sm text-headline-sm">Manual Review Overrides</h3>
+                    </div>
+                    <p class="text-label-md text-on-surface-variant mb-md">Force manual human review for all
+                        applications originating from high-risk or strictly regulated jurisdictions.</p>
+                    <div class="space-y-sm">
+                        <div
+                            class="flex items-center justify-between p-3 border border-outline-variant rounded-xl hover:bg-surface-container transition-colors">
+                            <div class="flex items-center gap-3">
+                                <span class="w-6 h-4 bg-gray-200 rounded-sm"></span>
+                                <span class="font-label-md">European Union (GDPR)</span>
+                            </div>
+                            <span class="text-primary font-bold text-label-md">Always Manual</span>
+                        </div>
+                        <div
+                            class="flex items-center justify-between p-3 border border-outline-variant rounded-xl hover:bg-surface-container transition-colors">
+                            <div class="flex items-center gap-3">
+                                <span class="w-6 h-4 bg-gray-200 rounded-sm"></span>
+                                <span class="font-label-md">United Kingdom</span>
+                            </div>
+                            <div
+                                class="relative inline-block w-10 h-5 transition duration-200 ease-in-out rounded-full">
+                                <input checked=""
+                                    class="toggle-checkbox absolute block w-5 h-5 bg-white border-2 rounded-full appearance-none cursor-pointer right-0 border-primary"
+                                    type="checkbox" />
+                                <label
+                                    class="toggle-label block h-5 overflow-hidden bg-primary rounded-full cursor-pointer"></label>
+                            </div>
+                        </div>
+                        <div
+                            class="flex items-center justify-between p-3 border border-outline-variant rounded-xl hover:bg-surface-container transition-colors">
+                            <div class="flex items-center gap-3">
+                                <span class="w-6 h-4 bg-gray-200 rounded-sm"></span>
+                                <span class="font-label-md">Southeast Asia</span>
+                            </div>
+                            <div
+                                class="relative inline-block w-10 h-5 transition duration-200 ease-in-out rounded-full">
+                                <input
+                                    class="toggle-checkbox absolute block w-5 h-5 bg-white border-2 rounded-full appearance-none cursor-pointer left-0 border-outline"
+                                    type="checkbox" />
+                                <label
+                                    class="toggle-label block h-5 overflow-hidden bg-surface-container-highest rounded-full cursor-pointer"></label>
+                            </div>
+                        </div>
+                        <button
+                            class="w-full mt-4 flex items-center justify-center gap-2 py-3 border-2 border-dashed border-outline-variant text-on-surface-variant font-label-md rounded-xl hover:border-primary hover:text-primary transition-all">
+                            <span class="material-symbols-outlined">add_location</span>
+                            Add Regional Rule
+                        </button>
+                    </div>
+                </section>
+                <!-- Section: Email Template Designer -->
+                <section class="col-span-12 glass-card rounded-[24px] p-md">
+                    <div class="flex items-center justify-between mb-md">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2 bg-on-tertiary-fixed-variant/10 rounded-lg text-on-tertiary-fixed-variant">
+                                <span class="material-symbols-outlined">mail</span>
+                            </div>
+                            <h3 class="font-headline-sm text-headline-sm">Notification Templates</h3>
+                        </div>
+                        <div class="flex gap-2">
+                            <button
+                                class="px-4 py-2 text-label-md font-bold rounded-lg bg-surface-container-highest text-on-surface hover:bg-surface-dim transition-colors">Preview
+                                HTML</button>
+                            <button
+                                class="px-4 py-2 text-label-md font-bold rounded-lg border border-primary text-primary hover:bg-primary/5 transition-colors">Send
+                                Test Email</button>
+                        </div>
+                    </div>
+                    <div class="flex gap-lg">
+                        <!-- Navigation Tabs -->
+                        <div class="w-1/4 space-y-1">
+                            <button
+                                class="w-full text-left px-4 py-3 bg-primary/10 border-l-4 border-primary text-primary font-bold rounded-r-lg">Account
+                                Approved</button>
+                            <button
+                                class="w-full text-left px-4 py-3 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors">Rejection:
+                                Missing Docs</button>
+                            <button
+                                class="w-full text-left px-4 py-3 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors">Rejection:
+                                Invalid ID</button>
+                            <button
+                                class="w-full text-left px-4 py-3 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors">Subscription
+                                Reminder</button>
+                            <button
+                                class="w-full text-left px-4 py-3 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors">Security
+                                Alert</button>
+                        </div>
+                        <!-- Editor -->
+                        <div class="flex-1 flex flex-col gap-sm">
+                            <div class="flex flex-col gap-2">
+                                <label class="font-label-md text-label-md text-on-surface-variant">Subject Line</label>
+                                <input
+                                    class="w-full bg-white border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+                                    type="text" value="Welcome home! Your {{platform_name}} account is verified." />
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <label class="font-label-md text-label-md text-on-surface-variant">Email Body
+                                    (Markdown/HTML)</label>
+                                <textarea
+                                    class="w-full bg-white border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none font-mono text-sm leading-relaxed"
+                                    rows="8">Dear {{user_first_name}},
+
+Congratulations! Our team has successfully verified your account. You can now start listing your properties or booking your next home with full platform benefits.
+
+**Next Steps:**
+- Complete your host profile
+- Browse trending properties in your area
+- Set up your preferred payout method
+
+Best regards,
+The {{platform_name}} Team
+                                </textarea>
+                            </div>
+                            <div class="flex gap-2 p-2 bg-surface-container rounded-lg overflow-x-auto">
+                                <span
+                                    class="bg-white px-2 py-1 rounded text-[11px] font-mono border border-outline-variant cursor-pointer hover:bg-primary/5">#{{user_first_name}}</span>
+                                <span
+                                    class="bg-white px-2 py-1 rounded text-[11px] font-mono border border-outline-variant cursor-pointer hover:bg-primary/5">#{{platform_name}}</span>
+                                <span
+                                    class="bg-white px-2 py-1 rounded text-[11px] font-mono border border-outline-variant cursor-pointer hover:bg-primary/5">#{{verification_date}}</span>
+                                <span
+                                    class="bg-white px-2 py-1 rounded text-[11px] font-mono border border-outline-variant cursor-pointer hover:bg-primary/5">#{{support_link}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <!-- Small Stats Footer -->
+                <div
+                    class="col-span-12 flex justify-between items-center bg-white/50 p-4 rounded-xl border border-outline-variant/30">
+                    <div class="flex gap-md">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                            <span class="text-label-sm font-label-sm text-on-surface-variant">Verification System:
+                                Online</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[16px] text-outline">history</span>
+                            <span class="text-label-sm font-label-sm text-on-surface-variant">Last saved: 14 mins ago by
+                                Admin_Sarah</span>
+                        </div>
+                    </div>
+                    <div class="flex gap-sm">
+                        <button class="text-label-sm font-label-sm text-error hover:underline">Reset to Default
+                            Settings</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+        // Micro-interaction for the Publish Changes button
+        const publishBtn = document.querySelector('button.bg-primary');
+        publishBtn.addEventListener('click', () => {
+            publishBtn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> Saving...';
+            setTimeout(() => {
+                publishBtn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Changes Published';
+                setTimeout(() => {
+                    publishBtn.innerHTML = '<span class="material-symbols-outlined">save</span> Publish Changes';
+                }, 3000);
+            }, 1200);
+        });
+
+        // Simple range value display update
+        const range = document.querySelector('input[type="range"]');
+        const rangeDisplay = range.parentElement.querySelector('.text-primary');
+        range.addEventListener('input', (e) => {
+            rangeDisplay.textContent = e.target.value + '%';
+        });
+
+        // Handle tab switching in email templates
+        const templateTabs = document.querySelectorAll('section:last-of-type nav button, section:last-of-type .w-1\/4 button');
+        templateTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                templateTabs.forEach(t => {
+                    t.classList.remove('bg-primary/10', 'border-l-4', 'border-primary', 'text-primary', 'font-bold');
+                    t.classList.add('text-on-surface-variant', 'hover:bg-surface-container');
+                });
+                tab.classList.remove('text-on-surface-variant', 'hover:bg-surface-container');
+                tab.classList.add('bg-primary/10', 'border-l-4', 'border-primary', 'text-primary', 'font-bold');
+            });
+        });
+    </script>
+</body>
+
+</html>

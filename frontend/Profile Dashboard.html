@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Tenant Dashboard | StayFinder</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#004ac6",
+                        "primary-container": "#2563eb",
+                        "secondary": "#4b41e1",
+                        "surface": "#f7f9fb",
+                        "surface-container-low": "#f2f4f6",
+                        "surface-container": "#eceef0",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface": "#191c1e",
+                        "on-surface-variant": "#434655",
+                        "outline-variant": "#c3c6d7",
+                        "outline": "#737686"
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb;
+        }
+
+        .glass-header {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+        }
+    </style>
+    <!-- Central Data Store -->
+    <script src="stayfinder-store.js"></script>
+</head>
+
+<body class="bg-surface text-on-surface overflow-x-hidden">
+
+    <!-- Auth Guard Modal (Shown if NOT Logged in as Student) -->
+    <div id="tenant-auth-guard"
+        class="fixed inset-0 bg-slate-900/90 backdrop-blur-md z-[100] flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl text-center space-y-5">
+            <div
+                class="w-16 h-16 bg-primary/10 text-primary rounded-2xl flex items-center justify-center mx-auto shadow-md">
+                <span class="material-symbols-outlined text-4xl">account_circle</span>
+            </div>
+            <div>
+                <span
+                    class="bg-primary/10 text-primary font-bold text-[10px] px-3 py-1 rounded-full uppercase tracking-wider">Confidential
+                    Tenant Portal</span>
+                <h2 class="text-2xl font-extrabold text-on-surface mt-2">Student Authentication Required</h2>
+                <p class="text-xs text-on-surface-variant mt-1.5 leading-relaxed">
+                    Student tenant dashboards and allotted room records are strictly confidential and accessible only
+                    after logging in.
+                </p>
+            </div>
+
+            <div class="space-y-3 pt-2">
+                <a href="Login.html"
+                    class="block w-full py-3.5 bg-primary text-white font-extrabold text-sm rounded-xl shadow-lg hover:bg-primary-container transition-all flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined">login</span> Log In as Student Tenant
+                </a>
+                <a href="Registration.html"
+                    class="block w-full py-3 bg-surface-container text-on-surface hover:bg-surface-container-high font-bold text-xs rounded-xl">
+                    Register New Account
+                </a>
+            </div>
+
+            <div class="pt-3 border-t border-outline-variant/40 text-center">
+                <a href="Home.html" class="text-xs text-on-surface-variant hover:text-primary font-medium">
+                    ← Return to Website
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Header -->
+    <header class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-white/20 shadow-sm">
+        <nav class="flex justify-between items-center px-6 md:px-12 py-3 max-w-[1280px] mx-auto">
+            <a href="Home.html" class="flex items-center gap-2">
+                <div
+                    class="w-9 h-9 rounded-xl bg-primary text-white flex items-center justify-center font-bold text-lg">
+                    S</div>
+                <span class="text-xl font-bold text-primary">StayFinder</span>
+            </a>
+            <div class="hidden md:flex items-center gap-6">
+                <a class="text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors"
+                    href="Home.html">Home</a>
+                <a class="text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors"
+                    href="Services.html">Services</a>
+                <a class="text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors"
+                    href="About.html">About Us</a>
+                <a class="text-sm font-bold text-primary border-b-2 border-primary pb-1"
+                    href="Profile Dashboard.html">My Tenant Dashboard</a>
+                <a class="text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors"
+                    href="FAQ.html">FAQ</a>
+                <a class="admin-only-link hidden text-sm font-bold text-secondary hover:underline flex items-center gap-1"
+                    href="Admin.html">
+                    <span class="material-symbols-outlined text-base">admin_panel_settings</span> Admin Panel
+                </a>
+            </div>
+            <div class="flex items-center gap-3">
+                <div id="nav-user-badge" class="flex items-center gap-2"></div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="mt-20 pt-8 pb-16 px-4 md:px-12 max-w-[1280px] mx-auto">
+        <!-- Profile Header -->
+        <header
+            class="flex flex-col md:flex-row items-center md:items-end gap-6 mb-8 p-6 bg-white rounded-3xl shadow-sm border border-outline-variant/30">
+            <div class="relative">
+                <div
+                    class="w-28 h-28 md:w-36 md:h-36 rounded-2xl overflow-hidden border-4 border-surface-container shadow-md">
+                    <img class="w-full h-full object-cover"
+                        src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80"
+                        alt="Student Profile" />
+                </div>
+            </div>
+
+            <div class="flex-1 text-center md:text-left">
+                <div class="flex flex-col md:flex-row md:items-center gap-2">
+                    <h1 class="text-2xl md:text-3xl font-extrabold text-on-surface" id="tenant-name-heading">Rahul
+                        Sharma</h1>
+                    <span
+                        class="inline-flex items-center self-center md:self-auto px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold">
+                        <span class="material-symbols-outlined text-sm mr-1">verified</span> Verified Student Tenant
+                    </span>
+                </div>
+                <p class="text-sm text-on-surface-variant mt-1" id="tenant-college-sub">B.Tech Computer Science · Delhi
+                    University (North Campus)</p>
+                <div class="flex flex-wrap justify-center md:justify-start gap-4 mt-3 text-xs text-on-surface-variant">
+                    <div class="flex items-center gap-1">
+                        <span class="material-symbols-outlined text-primary text-sm">location_on</span>
+                        <span>North Campus, Delhi</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-3">
+                <a href="Home.html"
+                    class="px-5 py-2.5 bg-primary text-white rounded-xl text-xs font-bold shadow-md hover:bg-primary-container transition-all">
+                    Find More Stays
+                </a>
+            </div>
+        </header>
+
+        <!-- Bento Grid Layout -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+            <!-- Left Column: Active Tenancy Allotment & Receipts -->
+            <div class="md:col-span-8 space-y-6">
+                <!-- Allotted Room Stay Card -->
+                <section class="bg-white p-6 rounded-3xl shadow-sm border border-outline-variant/30">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-bold text-on-surface">My Allotted Tenancy Stay</h2>
+                        <span class="px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold">Active
+                            Allotment</span>
+                    </div>
+
+                    <div id="active-allotment-container">
+                        <!-- JS populated dynamically -->
+                    </div>
+                </section>
+
+                <!-- Rent Payment Receipts (In Rupees ₹) -->
+                <section class="bg-white p-6 rounded-3xl shadow-sm border border-outline-variant/30">
+                    <h3 class="text-base font-bold text-on-surface mb-4">Payment Receipts & History</h3>
+                    <div class="divide-y divide-outline-variant/20 text-xs" id="payments-history-list">
+                        <!-- JS populated -->
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right Column: Saved Properties -->
+            <aside class="md:col-span-4 space-y-6">
+                <!-- Saved Favorites -->
+                <section class="bg-white p-6 rounded-3xl shadow-sm border border-outline-variant/30">
+                    <h3 class="text-base font-bold text-on-surface mb-4">Saved Properties</h3>
+                    <div class="space-y-3" id="saved-props-container">
+                        <!-- JS populated -->
+                    </div>
+                    <a href="Home.html"
+                        class="block w-full mt-4 py-2 border border-primary text-primary text-center rounded-xl text-xs font-bold hover:bg-primary/5 transition-colors">
+                        Browse More Stays
+                    </a>
+                </section>
+            </aside>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-outline-variant/30 py-6 px-6 mt-12">
+        <div
+            class="max-w-[1280px] mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-on-surface-variant">
+            <div class="flex items-center gap-2 font-bold text-primary">
+                <span>StayFinder</span> © 2026 Student Housing Platform
+            </div>
+            <div class="flex gap-4">
+                <a href="Home.html" class="hover:text-primary">Home</a>
+                <a href="Services.html" class="hover:text-primary">Services</a>
+                <a href="About.html" class="hover:text-primary">About</a>
+                <a href="FAQ.html" class="hover:text-primary">FAQ</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function checkTenantAuthGuard() {
+            const user = window.stayfinderStore.getCurrentUser();
+            const guard = document.getElementById('tenant-auth-guard');
+
+            if (user) {
+                guard.classList.add('hidden');
+                document.getElementById('tenant-name-heading').innerText = user.name;
+                renderTenantDashboard(user);
+            } else {
+                guard.classList.remove('hidden');
+            }
+        }
+
+        async function renderTenantDashboard(user) {
+            const allotmentContainer = document.getElementById('active-allotment-container');
+            const paymentsList = document.getElementById('payments-history-list');
+            const bookings = await window.stayfinderStore.fetchUserBookingsApi(user.email);
+
+            if (!bookings || bookings.length === 0) {
+                allotmentContainer.innerHTML = `
+                    <div class="p-8 text-center bg-surface-container-low rounded-2xl">
+                        <span class="material-symbols-outlined text-4xl text-outline mb-2">hotel</span>
+                        <p class="font-bold text-on-surface">No active room allotment yet.</p>
+                        <p class="text-xs text-on-surface-variant mt-1">Browse verified properties on the home page and click 'Book Now' to reserve your stay.</p>
+                        <a href="Home.html" class="inline-block mt-4 px-5 py-2 bg-primary text-white rounded-xl text-xs font-bold">Find Accommodation</a>
+                    </div>
+                `;
+                paymentsList.innerHTML = `<p class="text-xs text-outline p-4 text-center">No payment history recorded.</p>`;
+                return;
+            }
+
+            const latest = bookings[0];
+            const isApproved = latest.status === 'Approved' || latest.status === 'approved';
+            const isRejected = latest.status === 'Rejected' || latest.status === 'rejected';
+            const isPending = !isApproved && !isRejected;
+
+            let statusBanner = '';
+            if (isApproved) {
+                statusBanner = `
+                    <div class="mb-5 bg-emerald-50 border border-emerald-300 text-emerald-950 p-4 rounded-2xl flex items-start gap-3 text-xs shadow-sm">
+                        <span class="material-symbols-outlined text-emerald-600 text-2xl shrink-0 mt-0.5">verified</span>
+                        <div>
+                            <h4 class="font-extrabold text-xs text-emerald-900 flex items-center gap-1">
+                                🎉 Official Room Allocated & Verified by Admin!
+                            </h4>
+                            <p class="text-[11px] leading-relaxed text-emerald-800 mt-0.5">
+                                Your room allotment request has been officially approved. Your allocated room is <strong>${latest.roomNumber}</strong> with Digital Pass Key <strong>${latest.keyPass}</strong>.
+                            </p>
+                        </div>
+                    </div>
+                `;
+            } else if (isPending) {
+                statusBanner = `
+                    <div class="mb-5 bg-amber-50 border border-amber-200 text-amber-950 p-4 rounded-2xl flex items-start gap-3 text-xs shadow-sm">
+                        <span class="material-symbols-outlined text-amber-600 text-2xl shrink-0 mt-0.5">schedule</span>
+                        <div>
+                            <h4 class="font-bold text-xs text-amber-900">Under 24-Hour Admin Verification</h4>
+                            <p class="text-[11px] leading-relaxed text-amber-800/90 mt-0.5">
+                                <strong>We will reach out to you within 24 hours.</strong> Your booking details and deposit have been transmitted to our Admin control panel for identity and room allotment verification.
+                            </p>
+                        </div>
+                    </div>
+                `;
+            } else if (isRejected) {
+                statusBanner = `
+                    <div class="mb-5 bg-red-50 border border-red-200 text-red-900 p-4 rounded-2xl flex items-start gap-3 text-xs shadow-sm">
+                        <span class="material-symbols-outlined text-red-600 text-2xl shrink-0 mt-0.5">cancel</span>
+                        <div>
+                            <h4 class="font-bold text-xs text-red-900">Verification Declined</h4>
+                            <p class="text-[11px] leading-relaxed text-red-800/90 mt-0.5">
+                                Your room allotment verification request was declined by admin. Please contact support or re-check your student verification records.
+                            </p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            allotmentContainer.innerHTML = `
+                ${statusBanner}
+                <div class="flex flex-col sm:flex-row gap-6">
+                    <div class="w-full sm:w-48 h-44 rounded-2xl overflow-hidden shrink-0 border border-outline-variant/30 relative">
+                        <img class="w-full h-full object-cover" src="${latest.image}">
+                        <span class="absolute top-2 left-2 ${isPending ? 'bg-amber-500' : (isRejected ? 'bg-red-500' : 'bg-emerald-600')} text-white text-[10px] font-bold px-2 py-0.5 rounded-md uppercase">
+                            ${isPending ? 'Pending 24h' : (isRejected ? 'Declined' : 'Allotted')}
+                        </span>
+                    </div>
+                    <div class="flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-start">
+                                <h3 class="text-base font-extrabold text-on-surface">${latest.title}</h3>
+                                <span class="text-base font-extrabold text-primary">${latest.price}</span>
+                            </div>
+                            <p class="text-xs text-on-surface-variant flex items-center gap-1 mt-1">
+                                <span class="material-symbols-outlined text-xs text-primary">location_on</span>
+                                ${latest.location}
+                            </p>
+                            <div class="grid grid-cols-2 gap-2 mt-3 p-3 bg-surface-container-low rounded-xl text-xs">
+                                <div>
+                                    <p class="text-outline uppercase text-[10px] font-bold">Room Allotment</p>
+                                    <p class="font-extrabold ${isPending ? 'text-amber-700 font-medium' : 'text-emerald-700'}">${latest.roomNumber}</p>
+                                </div>
+                                <div>
+                                    <p class="text-outline uppercase text-[10px] font-bold">Allotment ID</p>
+                                    <p class="font-bold text-on-surface font-mono">${latest.id}</p>
+                                </div>
+                                <div>
+                                    <p class="text-outline uppercase text-[10px] font-bold">Move-in Date</p>
+                                    <p class="font-bold text-on-surface">${latest.moveInDate}</p>
+                                </div>
+                                <div>
+                                    <p class="text-outline uppercase text-[10px] font-bold">Digital Room Key</p>
+                                    <p class="font-mono font-bold ${isPending ? 'text-amber-700 font-normal text-[11px]' : 'text-emerald-700'}">${latest.keyPass}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-3 mt-4">
+                            ${isPending ? `
+                                <button onclick="location.reload()" class="flex-1 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold shadow transition-all flex items-center justify-center gap-1">
+                                    <span class="material-symbols-outlined text-base animate-spin">refresh</span> Refresh Verification Status
+                                </button>
+                            ` : `
+                                <button onclick="alert('Official Digital Room Allotment Pass\\n\\nProperty: ' + '${latest.title}' + '\\nRoom: ' + '${latest.roomNumber}' + '\\nKey Pass: ' + '${latest.keyPass}' + '\\nMove-in: ' + '${latest.moveInDate}')" class="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-extrabold shadow transition-all flex items-center justify-center gap-1">
+                                    <span class="material-symbols-outlined text-base">verified</span> View Verified Digital Room Pass
+                                </button>
+                            `}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            paymentsList.innerHTML = bookings.map(b => `
+                <div class="py-3 flex justify-between items-center">
+                    <div>
+                        <p class="font-bold text-on-surface">Token Booking Deposit (${b.title})</p>
+                        <p class="text-outline text-[11px]">Ref: ${b.id} · ${b.paymentStatus}</p>
+                    </div>
+                    <span class="font-extrabold ${b.status === 'Approved' ? 'text-emerald-600' : 'text-amber-600'} text-sm">${b.depositPaid || '₹2,500'}</span>
+                </div>
+            `).join('');
+        }
+
+        function renderSavedProperties() {
+            const container = document.getElementById('saved-props-container');
+            const props = window.stayfinderStore.getApprovedProperties().slice(1, 4);
+
+            container.innerHTML = props.map(p => `
+                <div class="flex items-center gap-3 p-2 rounded-xl border border-outline-variant/30 hover:border-primary transition-all">
+                    <img src="${p.image}" class="w-14 h-14 rounded-lg object-cover">
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-bold text-on-surface text-xs truncate">${p.title}</h4>
+                        <p class="text-[11px] text-primary font-extrabold">${p.price}</p>
+                    </div>
+                    <a href="Secure Booking Flow.html?id=${p.id}" class="px-3 py-1 bg-primary text-white text-[11px] font-bold rounded-lg hover:bg-primary-container shadow-sm">
+                        Book
+                    </a>
+                </div>
+            `).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkTenantAuthGuard();
+            renderSavedProperties();
+            window.stayfinderStore.syncAuthUI();
+        });
+        window.addEventListener('stayfinder-auth-changed', () => {
+            checkTenantAuthGuard();
+        });
+        window.addEventListener('stayfinder-data-changed', () => {
+            checkTenantAuthGuard();
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Secure Booking & Room Allotment | StayFinder</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#004ac6",
+                        "primary-container": "#2563eb",
+                        "secondary": "#4b41e1",
+                        "surface": "#f7f9fb",
+                        "surface-container-low": "#f2f4f6",
+                        "surface-container": "#eceef0",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface": "#191c1e",
+                        "on-surface-variant": "#434655",
+                        "outline-variant": "#c3c6d7",
+                        "outline": "#737686"
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb;
+        }
+
+        .glass-header {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+        }
+    </style>
+    <!-- Central Data Store -->
+    <script src="stayfinder-store.js"></script>
+</head>
+
+<body class="bg-surface text-on-surface overflow-x-hidden">
+
+    <!-- Auth Guard Modal (Shown if NOT Logged in) -->
+    <div id="booking-auth-guard"
+        class="fixed inset-0 bg-slate-900/90 backdrop-blur-md z-[100] flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl text-center space-y-5">
+            <div
+                class="w-16 h-16 bg-primary/10 text-primary rounded-2xl flex items-center justify-center mx-auto shadow-md">
+                <span class="material-symbols-outlined text-4xl">lock</span>
+            </div>
+            <div>
+                <span
+                    class="bg-primary/10 text-primary font-bold text-[10px] px-3 py-1 rounded-full uppercase tracking-wider">Authentication
+                    Required</span>
+                <h2 class="text-2xl font-extrabold text-on-surface mt-2">Login Required to Reserve</h2>
+                <p class="text-xs text-on-surface-variant mt-1.5 leading-relaxed">
+                    To protect student housing records and complete room allotment, you must log in or register as a
+                    Student Tenant first.
+                </p>
+            </div>
+
+            <div class="space-y-3 pt-2">
+                <button onclick="redirectToLogin()"
+                    class="w-full py-3.5 bg-primary text-white font-extrabold text-sm rounded-xl shadow-lg hover:bg-primary-container transition-all flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined">badge</span> Quick Log In as Student Tenant
+                </button>
+                <button onclick="redirectToLogin()"
+                    class="w-full py-3 bg-surface-container text-on-surface hover:bg-surface-container-high font-bold text-xs rounded-xl">
+                    Go to Full Login Page
+                </button>
+            </div>
+
+            <div class="pt-3 border-t border-outline-variant/40 text-center">
+                <a href="Home.html" class="text-xs text-on-surface-variant hover:text-primary font-medium">
+                    ← Return to Property Listings
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Navigation Bar -->
+    <header class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-white/20 shadow-sm">
+        <nav class="flex justify-between items-center px-6 md:px-12 py-3 max-w-[1280px] mx-auto">
+            <a href="Home.html" class="flex items-center gap-2">
+                <div
+                    class="w-9 h-9 rounded-xl bg-primary text-white flex items-center justify-center font-bold text-lg">
+                </div>
+                <span class="text-xl font-bold text-primary">StayFinder</span>
+            </a>
+            <div class="hidden md:flex items-center gap-6">
+                <a class="text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors"
+                    href="Home.html">Home</a>
+                <a class="text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors"
+                    href="Services.html">Services</a>
+                <a class="text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors"
+                    href="About.html">About Us</a>
+                <a class="tenant-only-link hidden text-sm font-bold text-primary" href="Profile Dashboard.html">My
+                    Tenant Dashboard</a>
+            </div>
+            <div class="flex items-center gap-3">
+                <div id="nav-user-badge" class="flex items-center gap-2"></div>
+                <a href="Home.html" class="text-xs font-bold text-primary hover:underline">← Back to Stays</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="pt-24 pb-16 px-4 md:px-12 max-w-[1000px] mx-auto min-h-screen">
+        <!-- Progress Bar -->
+        <div class="mb-8">
+            <div class="flex justify-between items-center mb-2 px-2 text-xs font-bold">
+                <div class="text-primary font-bold" id="step-label-1">1. Room & Dates</div>
+                <div class="text-on-surface-variant" id="step-label-2">2. Tenant Details</div>
+                <div class="text-on-surface-variant" id="step-label-3">3. Payment & Room Allotment</div>
+            </div>
+            <div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+                <div class="h-full bg-primary transition-all duration-500 ease-out" id="progress-bar"
+                    style="width: 33.33%;"></div>
+            </div>
+        </div>
+
+        <!-- Step 1: Room & Dates -->
+        <section class="transition-opacity duration-300 opacity-100 block" id="step-1">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                <div class="md:col-span-8 space-y-6">
+                    <div class="bg-white p-6 rounded-3xl shadow-sm border border-outline-variant/30">
+                        <h2 class="text-lg font-bold text-on-surface mb-4 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">bed</span> Selected Accommodation
+                        </h2>
+                        <div class="flex items-center gap-4 bg-surface-container-low p-4 rounded-2xl">
+                            <img id="booking-prop-img"
+                                src="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=800&q=80"
+                                class="w-24 h-24 rounded-xl object-cover">
+                            <div>
+                                <span
+                                    class="bg-primary/10 text-primary text-[10px] font-bold px-2.5 py-0.5 rounded-full"
+                                    id="booking-prop-cat">Boys PG</span>
+                                <h3 class="font-extrabold text-on-surface text-base mt-1" id="booking-prop-title">
+                                    Starlight Luxury PG for Boys</h3>
+                                <p class="text-xs text-on-surface-variant flex items-center gap-1 mt-0.5"
+                                    id="booking-prop-loc">
+                                    <span class="material-symbols-outlined text-xs text-primary">location_on</span>
+                                    North Campus, University Road
+                                </p>
+                                <p class="text-primary font-bold text-sm mt-1" id="booking-prop-price">₹8,500/mo</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-3xl shadow-sm border border-outline-variant/30">
+                        <h2 class="text-lg font-bold text-on-surface mb-4 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">calendar_month</span> Move-in Schedule
+                        </h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                            <div>
+                                <label class="block font-bold text-on-surface-variant mb-1">Move-in Date</label>
+                                <input
+                                    class="w-full p-3 rounded-xl bg-surface-container-low border border-outline-variant/40 focus:ring-2 focus:ring-primary"
+                                    type="date" id="move-in-date" value="2026-09-01" />
+                            </div>
+                            <div>
+                                <label class="block font-bold text-on-surface-variant mb-1">Tenancy Term</label>
+                                <select
+                                    class="w-full p-3 rounded-xl bg-surface-container-low border border-outline-variant/40 focus:ring-2 focus:ring-primary">
+                                    <option>11 Months (Academic Year)</option>
+                                    <option>6 Months (Semester Stay)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Booking Summary Sidebar -->
+                <div class="md:col-span-4">
+                    <div
+                        class="sticky top-24 bg-white p-6 rounded-3xl shadow-sm border border-outline-variant/30 space-y-4 text-xs">
+                        <h3 class="text-base font-bold text-on-surface border-b border-outline-variant/30 pb-3">Booking
+                            Summary</h3>
+                        <div class="space-y-2">
+                            <div class="flex justify-between"><span class="text-on-surface-variant">Monthly
+                                    Rent:</span><span class="font-bold text-primary" id="summary-rent">₹8,500</span>
+                            </div>
+                            <div class="flex justify-between"><span class="text-on-surface-variant">Security
+                                    Deposit:</span><span class="font-bold text-on-surface">₹5,000</span></div>
+                            <div class="flex justify-between"><span
+                                    class="text-on-surface-variant">Maintenance:</span><span
+                                    class="font-bold text-emerald-600">Included</span></div>
+                            <div
+                                class="pt-3 border-t border-outline-variant/30 flex justify-between items-center text-sm">
+                                <span class="font-bold text-on-surface">Token Payment:</span>
+                                <span class="font-extrabold text-primary text-base">₹2,500</span>
+                            </div>
+                        </div>
+                        <button
+                            class="w-full py-3.5 bg-primary text-white rounded-xl font-bold text-xs shadow-md hover:bg-primary-container transition-all active:scale-95 flex items-center justify-center gap-1"
+                            onclick="nextStep(2)">
+                            Continue to Tenant Details <span
+                                class="material-symbols-outlined text-sm">arrow_forward</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 2: Tenant Details -->
+        <section class="transition-opacity duration-300 opacity-0 hidden" id="step-2">
+            <div
+                class="max-w-2xl mx-auto bg-white p-8 rounded-3xl shadow-sm border border-outline-variant/30 space-y-4 text-xs">
+                <div class="flex items-center justify-between border-b border-outline-variant/30 pb-3">
+                    <div>
+                        <h2 class="text-xl font-bold text-on-surface">Tenant Student Information</h2>
+                        <p class="text-xs text-on-surface-variant">Step 2: Enter student details to submit for Admin
+                            room verification.</p>
+                    </div>
+                    <span
+                        class="bg-primary/10 text-primary text-[10px] font-bold px-3 py-1 rounded-full uppercase">Verification
+                        Step</span>
+                </div>
+                <div>
+                    <label class="block font-bold text-on-surface-variant mb-1">Student Full Name *</label>
+                    <input type="text" id="tenant-full-name" required value="Rahul Sharma"
+                        class="w-full p-3 bg-surface-container-low border border-outline-variant/40 rounded-xl focus:ring-2 focus:ring-primary">
+                </div>
+                <div>
+                    <label class="block font-bold text-on-surface-variant mb-1">Student Email Address *</label>
+                    <input type="email" id="tenant-email" required value="student@stayfinder.com"
+                        class="w-full p-3 bg-surface-container-low border border-outline-variant/40 rounded-xl focus:ring-2 focus:ring-primary">
+                </div>
+                <div>
+                    <label class="block font-bold text-on-surface-variant mb-1">Phone Number *</label>
+                    <input type="tel" id="tenant-phone" required value="+91 91234 56789"
+                        class="w-full p-3 bg-surface-container-low border border-outline-variant/40 rounded-xl focus:ring-2 focus:ring-primary">
+                </div>
+
+                <!-- Notice Banner -->
+                <div
+                    class="bg-indigo-50/80 border border-indigo-200 text-indigo-900 p-4 rounded-2xl flex items-start gap-3 text-left">
+                    <span class="material-symbols-outlined text-primary text-xl shrink-0 mt-0.5">verified_user</span>
+                    <div>
+                        <h4 class="font-bold text-xs">Admin Panel Sync Active</h4>
+                        <p class="text-[11px] text-indigo-800 leading-relaxed mt-0.5">
+                            Upon proceeding to the next step, your details will be queued in the <strong>Admin
+                                Dashboard</strong> for verification.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex justify-between pt-4">
+                    <button onclick="nextStep(1)"
+                        class="px-5 py-2.5 bg-surface-container hover:bg-surface-container-high rounded-xl font-bold">Back</button>
+                    <button onclick="nextStep(3)"
+                        class="px-6 py-2.5 bg-primary text-white rounded-xl font-bold shadow-md hover:bg-primary-container transition-all flex items-center gap-1">
+                        Proceed to Payment & Verification <span
+                            class="material-symbols-outlined text-sm">arrow_forward</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 3: Payment & Allotment Trigger -->
+        <section class="transition-opacity duration-300 opacity-0 hidden" id="step-3">
+            <div
+                class="max-w-lg mx-auto bg-white p-8 rounded-3xl shadow-md border border-outline-variant/30 text-center space-y-5 text-xs">
+                <div
+                    class="w-16 h-16 bg-amber-100 text-amber-700 rounded-2xl flex items-center justify-center mx-auto shadow-sm">
+                    <span class="material-symbols-outlined text-4xl">hourglass_top</span>
+                </div>
+                <div>
+                    <span
+                        class="bg-amber-100 text-amber-800 font-extrabold text-[10px] px-3 py-1 rounded-full uppercase tracking-wider">Verification
+                        System</span>
+                    <h2 class="text-2xl font-extrabold text-on-surface mt-2">Submit Token Deposit</h2>
+                    <p class="text-on-surface-variant mt-1">Pay token deposit of <strong
+                            class="text-primary font-bold">₹2,500</strong> to submit your booking for official Admin
+                        room allotment verification.</p>
+                </div>
+
+                <!-- 24 Hours Notice Box -->
+                <div
+                    class="bg-amber-50 border border-amber-200 text-amber-900 p-4 rounded-2xl flex items-start gap-3 text-left">
+                    <span class="material-symbols-outlined text-amber-600 text-2xl shrink-0 mt-0.5">schedule</span>
+                    <div>
+                        <h4 class="font-bold text-xs text-amber-900">We will reach out to you within 24 hours</h4>
+                        <p class="text-[11px] leading-relaxed text-amber-800/90 mt-0.5">
+                            Your room allotment request is submitted directly to our Admin panel. Our team will verify
+                            your student records and contact you within 24 hours to confirm your digital pass and room
+                            assignment.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center pt-2">
+                    <button onclick="nextStep(2)"
+                        class="px-5 py-2.5 bg-surface-container hover:bg-surface-container-high rounded-xl font-bold">Back</button>
+                    <button onclick="executePaymentAndAllotment()" id="pay-btn"
+                        class="flex-1 ml-3 py-3.5 bg-primary text-white font-extrabold text-sm rounded-xl shadow-lg hover:bg-primary-container transition-all flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined">send</span> Pay ₹2,500 & Request Admin Verification
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Allotment Verification Sent Modal -->
+    <div id="allotment-success-modal"
+        class="fixed inset-0 z-[110] bg-black/70 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl p-8 max-w-md w-full text-center space-y-4 shadow-2xl border border-amber-200">
+            <div
+                class="w-16 h-16 bg-amber-500 text-white rounded-2xl flex items-center justify-center mx-auto shadow-lg animate-pulse">
+                <span class="material-symbols-outlined text-4xl">mark_email_read</span>
+            </div>
+            <div>
+                <span
+                    class="bg-amber-100 text-amber-800 font-extrabold text-[10px] px-3 py-1 rounded-full uppercase tracking-wider">Awaiting
+                    Admin Verification</span>
+                <h2 class="text-2xl font-extrabold text-on-surface mt-2">Request Sent to Admin!</h2>
+                <p class="text-xs text-on-surface-variant mt-1.5 leading-relaxed">
+                    Your token deposit of ₹2,500 has been recorded. <strong>We will reach out to you within 24
+                        hours</strong> to verify your details and approve your room allotment.
+                </p>
+            </div>
+
+            <!-- Allotment Status Box -->
+            <div
+                class="bg-surface-container-low p-4 rounded-2xl border border-outline-variant/40 text-left text-xs space-y-2">
+                <div class="flex justify-between border-b border-outline-variant/30 pb-2">
+                    <span class="text-outline">Reference ID:</span>
+                    <strong class="text-on-surface font-mono" id="allotted-id">ALLOT-2026-9812</strong>
+                </div>
+                <div class="flex justify-between border-b border-outline-variant/30 pb-2">
+                    <span class="text-outline">Admin Status:</span>
+                    <strong class="text-amber-600 font-extrabold" id="allotted-room-number">Pending Verification (24h
+                        Review)</strong>
+                </div>
+                <div class="flex justify-between border-b border-outline-variant/30 pb-2">
+                    <span class="text-outline">Digital Access Key:</span>
+                    <strong class="text-on-surface-variant font-mono" id="allotted-key">Sent after Admin
+                        approval</strong>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-outline">Move-in Date:</span>
+                    <strong class="text-on-surface" id="allotted-date">Sept 01, 2026</strong>
+                </div>
+            </div>
+
+            <button onclick="goToTenantDashboard()"
+                class="w-full py-3.5 bg-primary text-white font-bold text-xs rounded-xl shadow-md hover:bg-primary-container transition-all flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined text-base">dashboard</span> Track Status on Tenant Dashboard
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentProp = null;
+
+        function checkAuthGuard() {
+            const user = window.stayfinderStore.getCurrentUser();
+            const guard = document.getElementById('booking-auth-guard');
+
+            if (user) {
+                guard.classList.add('hidden');
+                if (document.getElementById('tenant-full-name')) document.getElementById('tenant-full-name').value = user.name || 'Rahul Sharma';
+                if (document.getElementById('tenant-email')) document.getElementById('tenant-email').value = user.email || 'student@stayfinder.com';
+            } else {
+                guard.classList.remove('hidden');
+            }
+        }
+        function quickLoginAsStudent() {
+            window.stayfinderStore.login(
+                'student',
+                'Rahul Sharma',
+                'student@stayfinder.com'
+            );
+            checkAuthGuard();
+        }
+        function redirectToLogin() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const propId = urlParams.get('id') || 'prop-1';
+            window.location.href = `Login.html?redirect=booking&id=${propId}`;
+        }
+
+        function nextStep(step) {
+            [1, 2, 3].forEach(s => {
+                const el = document.getElementById(`step-${s}`);
+                if (el) {
+                    el.classList.add('hidden');
+                    el.classList.remove('block', 'opacity-100');
+                    el.classList.add('opacity-0');
+                }
+                const lbl = document.getElementById(`step-label-${s}`);
+                if (lbl) {
+                    if (s === step) {
+                        lbl.className = 'text-primary font-bold';
+                    } else {
+                        lbl.className = 'text-on-surface-variant font-normal';
+                    }
+                }
+            });
+
+            const target = document.getElementById(`step-${step}`);
+            if (target) {
+                target.classList.remove('hidden', 'opacity-0');
+                target.classList.add('block', 'opacity-100');
+            }
+
+            const progress = document.getElementById('progress-bar');
+            if (progress) {
+                if (step === 1) progress.style.width = '33.33%';
+                if (step === 2) progress.style.width = '66.66%';
+                if (step === 3) progress.style.width = '100%';
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function executePaymentAndAllotment() {
+            const btn = document.getElementById('pay-btn');
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> Submitting to Admin Panel...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                const user = window.stayfinderStore.getCurrentUser();
+                const moveInDate = document.getElementById('move-in-date') ? document.getElementById('move-in-date').value : '2026-09-01';
+
+                const newAllotment = window.stayfinderStore.createBookingAllotment({
+                    propertyId: currentProp ? currentProp.id : 'prop-1',
+                    title: currentProp ? currentProp.title : 'Starlight Luxury PG for Boys',
+                    location: currentProp ? currentProp.location : 'North Campus, Delhi',
+                    image: currentProp ? currentProp.image : 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=800&q=80',
+                    price: currentProp ? currentProp.price : '₹8,500/mo',
+                    tenantEmail: user ? user.email : (document.getElementById('tenant-email') ? document.getElementById('tenant-email').value : 'student@stayfinder.com'),
+                    tenantName: document.getElementById('tenant-full-name') ? document.getElementById('tenant-full-name').value : 'Rahul Sharma',
+                    tenantPhone: document.getElementById('tenant-phone') ? document.getElementById('tenant-phone').value : '+91 91234 56789',
+                    moveInDate: moveInDate
+                });
+
+                document.getElementById('allotted-id').innerText = newAllotment.id;
+                document.getElementById('allotted-room-number').innerText = 'Pending Verification (24h Review)';
+                document.getElementById('allotted-key').innerText = 'Unlocked upon Admin approval';
+                document.getElementById('allotted-date').innerText = newAllotment.moveInDate;
+
+                document.getElementById('allotment-success-modal').classList.remove('hidden');
+            }, 1200);
+        }
+
+        function goToTenantDashboard() {
+            window.location.href = 'Profile Dashboard.html';
+        }
+
+        async function loadPropertyDetails() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const propId = urlParams.get('id') || 'prop-1';
+            currentProp = await window.stayfinderStore.getPropertyByIdAsync(propId);
+
+            if (currentProp) {
+                if (document.getElementById('booking-prop-img')) document.getElementById('booking-prop-img').src = currentProp.image;
+                if (document.getElementById('booking-prop-cat')) document.getElementById('booking-prop-cat').innerText = currentProp.category;
+                if (document.getElementById('booking-prop-title')) document.getElementById('booking-prop-title').innerText = currentProp.title;
+                if (document.getElementById('booking-prop-loc')) document.getElementById('booking-prop-loc').innerHTML = `<span class="material-symbols-outlined text-xs text-primary">location_on</span> ${currentProp.location}`;
+                if (document.getElementById('booking-prop-price')) document.getElementById('booking-prop-price').innerText = currentProp.price;
+                if (document.getElementById('summary-rent')) document.getElementById('summary-rent').innerText = currentProp.price;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPropertyDetails();
+            checkAuthGuard();
+            window.stayfinderStore.syncAuthUI();
+        });
+        window.addEventListener('stayfinder-auth-changed', () => {
+            checkAuthGuard();
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Login & Auth | StayFinder</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#004ac6",
+              "secondary": "#4b41e1",
+              "surface": "#f7f9fb",
+              "surface-container-low": "#f2f4f6",
+              "on-surface": "#191c1e",
+              "on-surface-variant": "#434655",
+              "outline-variant": "#c3c6d7"
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body { font-family: 'Inter', sans-serif; }
+      .glass-panel {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+      }
+    </style>
+    <script src="stayfinder-store.js"></script>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col justify-between">
+
+    <!-- Top Navigation Bar -->
+    <header class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-white/20 shadow-sm">
+        <nav class="flex justify-between items-center px-6 md:px-12 py-3 max-w-[1280px] mx-auto">
+            <a href="Home.html" class="flex items-center gap-2">
+                <div class="w-9 h-9 rounded-xl bg-primary text-white flex items-center justify-center font-bold text-lg">S</div>
+                <span class="text-xl font-bold text-primary">StayFinder</span>
+            </a>
+            <div class="hidden md:flex items-center gap-6">
+                <a class="text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors" href="Home.html">Home</a>
+                <a class="text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors" href="Services.html">Services</a>
+                <a class="text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors" href="About.html">About Us</a>
+                <a class="text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors" href="FAQ.html">FAQ</a>
+                <a class="admin-only-link hidden text-sm font-bold text-secondary hover:underline flex items-center gap-1" href="Admin.html">
+                    <span class="material-symbols-outlined text-base">admin_panel_settings</span> Admin Panel
+                </a>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="Login.html" class="text-sm font-bold text-primary border-b-2 border-primary pb-1">Login</a>
+                <a href="Registration.html" class="bg-primary text-white text-sm font-bold px-4 py-2 rounded-xl shadow-md">Register</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Login Container -->
+    <main class="flex-1 pt-28 pb-16 px-4 flex items-center justify-center">
+        <div class="glass-panel rounded-3xl p-8 max-w-md w-full shadow-2xl space-y-6">
+
+            <!-- Redirect Banner if triggered from Booking -->
+            <div id="booking-redirect-notice" class="hidden bg-amber-50 border border-amber-200 p-3 rounded-2xl text-xs text-amber-800 flex items-center gap-2">
+                <span class="material-symbols-outlined text-amber-600 text-base">lock</span>
+                <span><strong>Login Required:</strong> Please sign in or register to complete your stay booking.</span>
+            </div>
+
+            <!-- Dynamic Feedback Alert Box -->
+            <div id="auth-alert-box" class="hidden p-4 rounded-2xl border text-xs space-y-2 animate-fade-up">
+                <div class="flex items-start gap-2">
+                    <span class="material-symbols-outlined text-xl text-amber-600" id="auth-alert-icon">warning</span>
+                    <div>
+                        <h4 class="font-bold text-sm" id="auth-alert-title">Authentication Alert</h4>
+                        <p class="mt-1 leading-relaxed" id="auth-alert-msg">Message content here...</p>
+                    </div>
+                </div>
+                <div id="auth-alert-action" class="pt-1 hidden text-right">
+                    <a href="Registration.html" class="inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline">
+                        Go to Registration Page <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <div class="w-12 h-12 bg-primary text-white rounded-2xl flex items-center justify-center mx-auto mb-3 font-bold text-xl shadow-lg" id="role-icon-box">
+                    <span class="material-symbols-outlined text-2xl" id="role-icon">person</span>
+                </div>
+                <h1 class="text-2xl font-extrabold text-on-surface" id="login-heading">Sign In to StayFinder</h1>
+                <p class="text-xs text-on-surface-variant mt-1" id="login-subheading">Select your role to access your account.</p>
+            </div>
+
+            <!-- Role Selector Buttons -->
+            <div class="grid grid-cols-2 gap-2 p-1 bg-surface-container-low rounded-2xl" id="role-selector-bar">
+                <button type="button" onclick="setLoginRole('student')" id="btn-role-student" class="py-2.5 px-3 rounded-xl text-xs font-bold transition-all bg-primary text-white shadow">
+                    Student Tenant
+                </button>
+                <button type="button" onclick="setLoginRole('owner')" id="btn-role-owner" class="py-2.5 px-3 rounded-xl text-xs font-bold transition-all text-on-surface-variant hover:text-primary">
+                    Property Owner
+                </button>
+            </div>
+
+            <!-- Login Form -->
+            <form onsubmit="handleLoginSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant mb-1" id="email-label">Email Address</label>
+                    <input type="email" id="login-email" required placeholder="name@domain.com" class="w-full px-4 py-3 bg-white border border-outline-variant/60 rounded-xl text-sm focus:ring-2 focus:ring-primary">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant mb-1" id="pass-label">Password</label>
+                    <input type="password" id="login-password" required placeholder="••••••••" class="w-full px-4 py-3 bg-white border border-outline-variant/60 rounded-xl text-sm focus:ring-2 focus:ring-primary">
+                    <p id="admin-hint" class="text-[11px] text-secondary font-semibold mt-1 hidden">Passcode for Admin: <code>admin123</code></p>
+                </div>
+
+                <button type="submit" id="submit-btn" class="w-full py-3.5 bg-primary text-white font-extrabold text-sm rounded-xl shadow-lg hover:bg-primary-container transition-all flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined">login</span> Sign In as Student
+                </button>
+            </form>
+
+            <div class="text-center text-xs text-on-surface-variant pt-2 border-t border-outline-variant/30">
+                Don't have an account? <a href="Registration.html" class="text-primary font-bold hover:underline">Register Student or Property Account</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-outline-variant/30 py-6 px-6">
+        <div class="max-w-[1280px] mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-on-surface-variant">
+            <div class="flex items-center gap-2 font-bold text-primary">
+                <span>StayFinder</span> © 2026 Student Housing Platform
+                <!-- Secret Admin Trigger Dot -->
+                <span onclick="enableSecretAdminLogin()" title="System Admin Switch" class="w-1.5 h-1.5 rounded-full bg-transparent hover:bg-outline cursor-pointer ml-1"></span>
+            </div>
+            <div class="flex gap-4">
+                <a href="Home.html" class="hover:text-primary">Home</a>
+                <a href="Registration.html" class="hover:text-primary">Register</a>
+                <a href="Admin.html" class="admin-only-link hidden hover:text-primary font-bold text-secondary">Admin Panel</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let currentRole = 'student';
+
+        function checkQueryRedirect() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('redirect') === 'booking') {
+                document.getElementById('booking-redirect-notice').classList.remove('hidden');
+            }
+        }
+
+        function setLoginRole(role) {
+            currentRole = role;
+            const studentBtn = document.getElementById('btn-role-student');
+            const ownerBtn = document.getElementById('btn-role-owner');
+            const submitBtn = document.getElementById('submit-btn');
+            const roleIcon = document.getElementById('role-icon');
+            const roleIconBox = document.getElementById('role-icon-box');
+            const adminHint = document.getElementById('admin-hint');
+            const emailInput = document.getElementById('login-email');
+            const passInput = document.getElementById('login-password');
+            hideAlert();
+
+            if (studentBtn) studentBtn.className = "py-2.5 px-3 rounded-xl text-xs font-bold transition-all text-on-surface-variant hover:text-primary";
+            if (ownerBtn) ownerBtn.className = "py-2.5 px-3 rounded-xl text-xs font-bold transition-all text-on-surface-variant hover:text-primary";
+
+            if (role === 'admin') {
+                submitBtn.className = "w-full py-3.5 bg-secondary text-white font-extrabold text-sm rounded-xl shadow-lg hover:bg-secondary/90 transition-all flex items-center justify-center gap-2";
+                submitBtn.innerHTML = `<span class="material-symbols-outlined">admin_panel_settings</span> Sign In as Admin`;
+                roleIcon.innerText = "admin_panel_settings";
+                roleIconBox.className = "w-12 h-12 bg-secondary text-white rounded-2xl flex items-center justify-center mx-auto mb-3 font-bold text-xl shadow-lg";
+                if (adminHint) adminHint.classList.remove('hidden');
+                emailInput.value = "admin@stayfinder.com";
+                passInput.value = "admin123";
+            } else if (role === 'owner') {
+                if (ownerBtn) ownerBtn.className = "py-2.5 px-3 rounded-xl text-xs font-bold transition-all bg-primary text-white shadow";
+                submitBtn.className = "w-full py-3.5 bg-primary text-white font-extrabold text-sm rounded-xl shadow-lg hover:bg-primary-container transition-all flex items-center justify-center gap-2";
+                submitBtn.innerHTML = `<span class="material-symbols-outlined">real_estate_agent</span> Sign In as Owner`;
+                roleIcon.innerText = "real_estate_agent";
+                roleIconBox.className = "w-12 h-12 bg-primary text-white rounded-2xl flex items-center justify-center mx-auto mb-3 font-bold text-xl shadow-lg";
+                if (adminHint) adminHint.classList.add('hidden');
+                emailInput.value = "";
+                passInput.value = "";
+            } else {
+                if (studentBtn) studentBtn.className = "py-2.5 px-3 rounded-xl text-xs font-bold transition-all bg-primary text-white shadow";
+                submitBtn.className = "w-full py-3.5 bg-primary text-white font-extrabold text-sm rounded-xl shadow-lg hover:bg-primary-container transition-all flex items-center justify-center gap-2";
+                submitBtn.innerHTML = `<span class="material-symbols-outlined">person</span> Sign In as Student`;
+                roleIcon.innerText = "person";
+                roleIconBox.className = "w-12 h-12 bg-primary text-white rounded-2xl flex items-center justify-center mx-auto mb-3 font-bold text-xl shadow-lg";
+                if (adminHint) adminHint.classList.add('hidden');
+                emailInput.value = "";
+                passInput.value = "";
+            }
+        }
+
+        function showAlert(title, msg, type = 'warning', showRegisterAction = false) {
+            const box = document.getElementById('auth-alert-box');
+            const icon = document.getElementById('auth-alert-icon');
+            const titleEl = document.getElementById('auth-alert-title');
+            const msgEl = document.getElementById('auth-alert-msg');
+            const actionEl = document.getElementById('auth-alert-action');
+
+            if (type === 'error') {
+                box.className = "p-4 rounded-2xl bg-red-50 border border-red-200 text-red-900 text-xs space-y-2 animate-fade-up";
+                icon.className = "material-symbols-outlined text-xl text-red-600";
+                icon.innerText = "error";
+            } else if (type === 'pending') {
+                box.className = "p-4 rounded-2xl bg-amber-50 border border-amber-300 text-amber-900 text-xs space-y-2 animate-fade-up";
+                icon.className = "material-symbols-outlined text-xl text-amber-600";
+                icon.innerText = "hourglass_top";
+            } else {
+                box.className = "p-4 rounded-2xl bg-blue-50 border border-blue-200 text-blue-900 text-xs space-y-2 animate-fade-up";
+                icon.className = "material-symbols-outlined text-xl text-blue-600";
+                icon.innerText = "info";
+            }
+
+            titleEl.innerText = title;
+            msgEl.innerText = msg;
+
+            if (showRegisterAction) {
+                actionEl.classList.remove('hidden');
+            } else {
+                actionEl.classList.add('hidden');
+            }
+
+            box.classList.remove('hidden');
+        }
+
+        function hideAlert() {
+            document.getElementById('auth-alert-box').classList.add('hidden');
+        }
+
+        async function handleLoginSubmit(e) {
+            e.preventDefault();
+            hideAlert();
+
+            const pass = document.getElementById('login-password').value.trim();
+            const email = document.getElementById('login-email').value.trim();
+            const submitBtn = document.getElementById('submit-btn');
+
+            if (!email || !pass) {
+                showAlert('Missing Details', 'Please fill in both email and password.', 'error');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<span class="material-symbols-outlined animate-spin">progress_activity</span> Authenticating...`;
+
+            try {
+                const res = await window.stayfinderStore.loginApi(email, pass, currentRole);
+
+                if (res.success) {
+                    if (currentRole === 'admin') {
+                        window.location.href = 'Admin.html';
+                    } else if (currentRole === 'owner') {
+                        window.location.href = 'Owner Dashboard.html';
+                    } else {
+                        const params = new URLSearchParams(window.location.search);
+                        if (params.get('redirect') === 'booking') {
+                            const propId = params.get('id') || 'prop-1';
+                            window.location.href = `Secure Booking Flow.html?id=${propId}`;
+                        } else {
+                            window.location.href = 'Profile Dashboard.html';
+                        }
+                    }
+                } else {
+                    submitBtn.disabled = false;
+                    setLoginRole(currentRole);
+
+                    if (res.code === 'NOT_REGISTERED') {
+                        showAlert('Not Registered', res.message || 'Account not found. You need to first register before logging in.', 'error', true);
+                    } else if (res.code === 'APPROVAL_PENDING') {
+                        showAlert('Admin Approval Pending', res.message || 'Your account is pending Admin approval. You cannot log in until approved.', 'pending');
+                    } else {
+                        showAlert('Authentication Failed', res.message || 'Invalid email or password.', 'error');
+                    }
+                }
+            } catch (err) {
+                submitBtn.disabled = false;
+                setLoginRole(currentRole);
+                showAlert('Connection Error', 'Could not reach server. Please check your network or start the backend.', 'error');
+            }
+        }
+
+        // Secret Admin Login trigger (Ctrl+Shift+A)
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+                enableSecretAdminLogin();
+            }
+        });
+
+        function enableSecretAdminLogin() {
+            setLoginRole('admin');
+            showAlert('Admin Passcode Activated', 'Enter passcode admin123 to log in as Administrator.', 'info');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkQueryRedirect();
+        });
+    </script>
+</body>
+</html>

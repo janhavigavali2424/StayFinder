@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Property & User Registration | StayFinder</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#004ac6",
+                        "primary-container": "#2563eb",
+                        "secondary": "#4b41e1",
+                        "surface": "#f7f9fb",
+                        "surface-container-low": "#f2f4f6",
+                        "surface-container": "#eceef0",
+                        "surface-container-high": "#e6e8ea",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface": "#191c1e",
+                        "on-surface-variant": "#434655",
+                        "outline-variant": "#c3c6d7"
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+    </style>
+    <!-- Central Data Store -->
+    <script src="stayfinder-store.js"></script>
+</head>
+
+<body class="bg-surface text-on-surface min-h-screen flex flex-col">
+
+    <!-- Top Navigation Bar -->
+    <nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md shadow-sm border-b border-white/20">
+        <div class="flex justify-between items-center px-6 md:px-12 py-3 max-w-[1280px] mx-auto">
+            <a href="Home.html" class="flex items-center gap-2">
+                <div
+                    class="w-9 h-9 rounded-xl bg-primary text-white flex items-center justify-center font-bold text-lg">
+                    S</div>
+                <span class="text-xl font-bold text-primary">StayFinder</span>
+            </a>
+            <div class="hidden md:flex items-center gap-6">
+                <a href="Home.html"
+                    class="text-sm font-medium text-on-surface-variant hover:text-primary transition-colors">Home</a>
+                <a href="Services.html"
+                    class="text-sm font-medium text-on-surface-variant hover:text-primary transition-colors">Services</a>
+                <a href="About.html"
+                    class="text-sm font-medium text-on-surface-variant hover:text-primary transition-colors">About
+                    Us</a>
+                <a href="FAQ.html"
+                    class="text-sm font-medium text-on-surface-variant hover:text-primary transition-colors">FAQ</a>
+                <a href="Admin.html"
+                    class="admin-only-link hidden text-sm font-bold text-secondary hover:underline flex items-center gap-1">
+                    <span class="material-symbols-outlined text-base">admin_panel_settings</span> Admin Panel
+                </a>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="Login.html"
+                    class="text-sm font-semibold text-on-surface-variant hover:text-primary px-3 py-2">Login</a>
+                <a href="Registration.html"
+                    class="bg-primary text-white text-sm font-bold px-4 py-2 rounded-xl shadow-md">Register</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Registration Shell -->
+    <main class="flex-1 pt-24 pb-16 px-4 max-w-3xl mx-auto w-full">
+        <div class="glass-panel rounded-3xl p-6 md:p-10 shadow-2xl border border-white/60">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <span
+                    class="bg-primary/10 text-primary font-bold text-xs px-3 py-1 rounded-full uppercase tracking-wider">StayFinder
+                    Portal</span>
+                <h1 class="text-3xl font-extrabold text-on-surface mt-2">Registration & Property Submission</h1>
+                <p class="text-sm text-on-surface-variant mt-1">Register as a Student or submit your Property to be
+                    reviewed & approved by the Admin.</p>
+            </div>
+
+            <!-- Role Selector Tabs -->
+            <div class="grid grid-cols-2 gap-3 p-1.5 bg-surface-container-low rounded-2xl mb-8">
+                <button type="button" onclick="selectRole('student')" id="role-btn-student"
+                    class="py-3 px-4 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 bg-primary text-white shadow-md">
+                    <span class="material-symbols-outlined">school</span> Student / Tenant Registration
+                </button>
+                <button type="button" onclick="selectRole('owner')" id="role-btn-owner"
+                    class="py-3 px-4 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 text-on-surface-variant hover:text-primary">
+                    <span class="material-symbols-outlined">real_estate_agent</span> Property Owner (List Property)
+                </button>
+            </div>
+
+            <!-- Student Form -->
+            <form id="student-form" onsubmit="submitStudentRegistration(event)" class="space-y-4">
+                <div class="bg-primary/5 p-4 rounded-2xl border border-primary/20 flex items-start gap-3">
+                    <span class="material-symbols-outlined text-primary text-2xl mt-0.5">verified_user</span>
+                    <div>
+                        <h4 class="font-bold text-sm text-primary">Strict Admin Approval Workflow</h4>
+                        <p class="text-xs text-on-surface-variant">After registering, your account will be placed in the
+                            **Admin Verification Queue**. You must wait for Admin Approval before you can log in!</p>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-on-surface-variant mb-1">Student Full Name *</label>
+                        <input type="text" id="student-name" required placeholder="e.g. Rahul Sharma"
+                            class="w-full px-4 py-3 bg-white border border-outline-variant/60 rounded-xl text-sm focus:ring-2 focus:ring-primary">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-on-surface-variant mb-1">Email Address *</label>
+                            <input type="email" id="student-email" required placeholder="student@university.edu"
+                                class="w-full px-4 py-3 bg-white border border-outline-variant/60 rounded-xl text-sm focus:ring-2 focus:ring-primary">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-on-surface-variant mb-1">Phone Number</label>
+                            <input type="tel" id="student-phone" placeholder="+91 98765 43210"
+                                class="w-full px-4 py-3 bg-white border border-outline-variant/60 rounded-xl text-sm focus:ring-2 focus:ring-primary">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-on-surface-variant mb-1">College / University
+                            Name</label>
+                        <input type="text" id="student-college" placeholder="e.g. Delhi University / IIT / Amity"
+                            class="w-full px-4 py-3 bg-white border border-outline-variant/60 rounded-xl text-sm focus:ring-2 focus:ring-primary">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-on-surface-variant mb-1">Create Password *</label>
+                        <input type="password" id="student-password" required placeholder="••••••••"
+                            class="w-full px-4 py-3 bg-white border border-outline-variant/60 rounded-xl text-sm focus:ring-2 focus:ring-primary">
+                    </div>
+                    <button type="submit" id="student-sub-btn"
+                        class="w-full py-4 bg-primary text-white font-extrabold text-base rounded-2xl shadow-xl hover:bg-primary-container active:scale-[0.99] transition-all flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined">how_to_reg</span> Register Student Account
+                    </button>
+                </div>
+            </form>
+
+            <!-- Property Owner Form -->
+            <form id="owner-form" onsubmit="submitPropertyRegistration(event)" class="space-y-6 hidden">
+                <div class="bg-primary/5 p-4 rounded-2xl border border-primary/20 flex items-start gap-3">
+                    <span class="material-symbols-outlined text-primary text-2xl mt-0.5">verified_user</span>
+                    <div>
+                        <h4 class="font-bold text-sm text-primary">Admin Verification Workflow</h4>
+                        <p class="text-xs text-on-surface-variant">When you register your property below, it will be
+                            sent to the **Admin Approval Panel**. Once approved by the admin, your account & listing
+                            will be active!</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-on-surface-variant mb-1">Owner Full Name *</label>
+                        <input type="text" id="prop-owner-name" required placeholder="e.g. Ramesh Chandra"
+                            class="w-full px-4 py-3 bg-white border border-outline-variant/60 rounded-xl text-sm focus:ring-2 focus:ring-primary">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-on-surface-variant mb-1">Owner Phone Number *</label>
+                        <input type="tel" id="prop-owner-phone" required placeholder="e.g. +91 98765 43210"
+                            class="w-full px-4 py-3 bg-white border border-outline-variant/60 rounded-xl text-sm focus:ring-2 focus:ring-primary">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant mb-1">Owner Email Address *</label>
+                    <input type="email" id="prop-owner-email" required placeholder="e.g. owner@stayfinder.com"
+                        class="w-full px-4 py-3 bg-white border border-outline-variant/60 rounded-xl text-sm focus:ring-2 focus:ring-primary">
+                </div>
+
+                <hr class="border-outline-variant/40">
+
+                <h3 class="font-bold text-base text-on-surface">Property Details</h3>
+
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant mb-1">Property Title *</label>
+                    <input type="text" id="prop-title" required placeholder="e.g. Metro Heights Luxury PG for Boys"
+                        class="w-full px-4 py-3 bg-white border border-outline-variant/60 rounded-xl text-sm focus:ring-2 focus:ring-primary">
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-on-surface-variant mb-1">Property Category *</label>
+                        <select id="prop-category" required
+                            class="w-full px-4 py-3 bg-white border border-outline-variant/60 rounded-xl text-sm focus:ring-2 focus:ring-primary">
+                            <option value="Boys PG">Boys PG</option>
+                            <option value="Girls PG">Girls PG</option>
+                            <option value="Co-Living">Co-Living</option>
+                            <option value="Private Apartment">Private Apartment</option>
+                            <option value="Luxury Studio">Luxury Studio</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-on-surface-variant mb-1">Monthly Rent (₹) *</label>
+                        <input type="text" id="prop-price" required placeholder="e.g. 9500"
+                            class="w-full px-4 py-3 bg-white border border-outline-variant/60 rounded-xl text-sm focus:ring-2 focus:ring-primary">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-on-surface-variant mb-1">Location / Address *</label>
+                        <input type="text" id="prop-location" required placeholder="e.g. North Campus, Ring Road"
+                            class="w-full px-4 py-3 bg-white border border-outline-variant/60 rounded-xl text-sm focus:ring-2 focus:ring-primary">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-on-surface-variant mb-1">Room Sharing Type *</label>
+                        <select id="prop-room-type" required
+                            class="w-full px-4 py-3 bg-white border border-outline-variant/60 rounded-xl text-sm focus:ring-2 focus:ring-primary">
+                            <option value="Single Room">Single Room</option>
+                            <option value="Double Sharing">Double Sharing</option>
+                            <option value="Triple Sharing">Triple Sharing</option>
+                            <option value="Full Apartment">Full Apartment</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Property Image Selector -->
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant mb-2">Property Photo (Select Preset or
+                        Paste URL) *</label>
+                    <div class="grid grid-cols-4 gap-2 mb-3">
+                        <button type="button"
+                            onclick="selectPresetImage('https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=800&q=80', this)"
+                            class="preset-img-btn border-2 border-primary rounded-xl overflow-hidden relative h-20 group">
+                            <img src="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=300&q=80"
+                                class="w-full h-full object-cover">
+                            <span
+                                class="absolute bottom-0 inset-x-0 bg-black/60 text-white text-[10px] text-center py-0.5">Modern
+                                PG</span>
+                        </button>
+                        <button type="button"
+                            onclick="selectPresetImage('https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=800&q=80', this)"
+                            class="preset-img-btn border-2 border-transparent hover:border-primary rounded-xl overflow-hidden relative h-20 group">
+                            <img src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=300&q=80"
+                                class="w-full h-full object-cover">
+                            <span
+                                class="absolute bottom-0 inset-x-0 bg-black/60 text-white text-[10px] text-center py-0.5">Cozy
+                                Room</span>
+                        </button>
+                        <button type="button"
+                            onclick="selectPresetImage('https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80', this)"
+                            class="preset-img-btn border-2 border-transparent hover:border-primary rounded-xl overflow-hidden relative h-20 group">
+                            <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=300&q=80"
+                                class="w-full h-full object-cover">
+                            <span
+                                class="absolute bottom-0 inset-x-0 bg-black/60 text-white text-[10px] text-center py-0.5">Co-Living</span>
+                        </button>
+                        <button type="button"
+                            onclick="selectPresetImage('https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80', this)"
+                            class="preset-img-btn border-2 border-transparent hover:border-primary rounded-xl overflow-hidden relative h-20 group">
+                            <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=300&q=80"
+                                class="w-full h-full object-cover">
+                            <span
+                                class="absolute bottom-0 inset-x-0 bg-black/60 text-white text-[10px] text-center py-0.5">Apartment</span>
+                        </button>
+                    </div>
+                    <input type="url" id="prop-image-url" required
+                        value="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=800&q=80"
+                        placeholder="Custom Image URL..."
+                        class="w-full px-4 py-2.5 bg-white border border-outline-variant/60 rounded-xl text-xs focus:ring-2 focus:ring-primary">
+                </div>
+
+                <!-- Amenities Selection -->
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant mb-2">Amenities Included</label>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs">
+                        <label class="flex items-center gap-2 p-2 bg-surface-container-low rounded-lg cursor-pointer">
+                            <input type="checkbox" name="amenities" value="High-Speed Wi-Fi" checked
+                                class="rounded text-primary focus:ring-primary"> High-Speed Wi-Fi
+                        </label>
+                        <label class="flex items-center gap-2 p-2 bg-surface-container-low rounded-lg cursor-pointer">
+                            <input type="checkbox" name="amenities" value="Air Conditioning (AC)" checked
+                                class="rounded text-primary focus:ring-primary"> Air Conditioning (AC)
+                        </label>
+                        <label class="flex items-center gap-2 p-2 bg-surface-container-low rounded-lg cursor-pointer">
+                            <input type="checkbox" name="amenities" value="3 Meals Included" checked
+                                class="rounded text-primary focus:ring-primary"> 3 Meals Included
+                        </label>
+                        <label class="flex items-center gap-2 p-2 bg-surface-container-low rounded-lg cursor-pointer">
+                            <input type="checkbox" name="amenities" value="CCTV Security" checked
+                                class="rounded text-primary focus:ring-primary"> CCTV Security
+                        </label>
+                        <label class="flex items-center gap-2 p-2 bg-surface-container-low rounded-lg cursor-pointer">
+                            <input type="checkbox" name="amenities" value="Power Backup"
+                                class="rounded text-primary focus:ring-primary"> Power Backup
+                        </label>
+                        <label class="flex items-center gap-2 p-2 bg-surface-container-low rounded-lg cursor-pointer">
+                            <input type="checkbox" name="amenities" value="Laundry Service"
+                                class="rounded text-primary focus:ring-primary"> Laundry Service
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant mb-1">Description</label>
+                    <textarea id="prop-description" rows="3"
+                        placeholder="Describe your property, rules, proximity to colleges, etc."
+                        class="w-full px-4 py-3 bg-white border border-outline-variant/60 rounded-xl text-sm focus:ring-2 focus:ring-primary">Fully furnished student accommodation with excellent connectivity to major colleges, 24/7 water and security.</textarea>
+                </div>
+
+                <button type="submit" id="owner-sub-btn"
+                    class="w-full py-4 bg-primary text-white font-extrabold text-base rounded-2xl shadow-xl hover:bg-primary-container active:scale-[0.99] transition-all flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined">send</span> Submit Property for Admin Approval
+                </button>
+            </form>
+
+            <!-- Success Box -->
+            <div id="success-banner"
+                class="hidden mt-6 bg-emerald-500/10 border-2 border-emerald-500 p-6 rounded-2xl text-center space-y-4 animate-fade-up">
+                <div
+                    class="w-16 h-16 bg-emerald-500 text-white rounded-full flex items-center justify-center mx-auto shadow-lg">
+                    <span class="material-symbols-outlined text-3xl">check_circle</span>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-emerald-900" id="success-title">Registration Submitted!</h3>
+                    <p class="text-sm text-emerald-800 mt-1" id="success-message">
+                        Your account registration is in the **Admin Verification Queue** (Status: Pending).
+                    </p>
+                </div>
+                <div class="flex flex-col sm:flex-row justify-center gap-3 pt-2">
+                    <a href="Login.html"
+                        class="px-6 py-3 bg-primary text-white font-bold text-sm rounded-xl shadow-md hover:bg-primary-container transition-all flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined">login</span> Go to Login Page
+                    </a>
+                    <a href="Admin.html"
+                        class="admin-only-link hidden px-6 py-3 bg-secondary text-white font-bold text-sm rounded-xl shadow-md hover:bg-secondary/90 transition-all flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined">admin_panel_settings</span> Go to Admin Panel & Approve
+                        It
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-outline-variant/30 py-8 px-6 mt-auto">
+        <div
+            class="max-w-[1280px] mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-on-surface-variant">
+            <div class="flex items-center gap-2 font-bold text-primary text-sm">
+                <span>StayFinder</span> © 2026 Student Housing Platform
+            </div>
+            <div class="flex flex-wrap gap-4">
+                <a href="Home.html" class="hover:text-primary">Home</a>
+                <a href="Services.html" class="hover:text-primary">Services</a>
+                <a href="About.html" class="hover:text-primary">About Us</a>
+                <a href="FAQ.html" class="hover:text-primary">FAQ</a>
+                <a href="Admin.html" class="admin-only-link hidden hover:text-primary font-bold text-secondary">Admin
+                    Panel</a>
+                <a href="Owner Dashboard.html" class="hover:text-primary">Owner Portal</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function selectRole(role) {
+            const ownerBtn = document.getElementById('role-btn-owner');
+            const studentBtn = document.getElementById('role-btn-student');
+            const ownerForm = document.getElementById('owner-form');
+            const studentForm = document.getElementById('student-form');
+
+            if (role === 'owner') {
+                ownerBtn.className = "py-3 px-4 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 bg-primary text-white shadow-md";
+                studentBtn.className = "py-3 px-4 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 text-on-surface-variant hover:text-primary";
+                ownerForm.classList.remove('hidden');
+                studentForm.classList.add('hidden');
+            } else {
+                studentBtn.className = "py-3 px-4 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 bg-primary text-white shadow-md";
+                ownerBtn.className = "py-3 px-4 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 text-on-surface-variant hover:text-primary";
+                studentForm.classList.remove('hidden');
+                ownerForm.classList.add('hidden');
+            }
+        }
+
+        function selectPresetImage(url, btn) {
+            document.querySelectorAll('.preset-img-btn').forEach(b => {
+                b.classList.remove('border-primary');
+                b.classList.add('border-transparent');
+            });
+            btn.classList.remove('border-transparent');
+            btn.classList.add('border-primary');
+            document.getElementById('prop-image-url').value = url;
+        }
+
+        async function submitStudentRegistration(e) {
+            e.preventDefault();
+            const btn = document.getElementById('student-sub-btn');
+            btn.disabled = true;
+            btn.innerHTML = `<span class="material-symbols-outlined animate-spin">progress_activity</span> Registering...`;
+
+            const studentData = {
+                name: document.getElementById('student-name').value.trim(),
+                email: document.getElementById('student-email').value.trim(),
+                phone: document.getElementById('student-phone').value.trim(),
+                college: document.getElementById('student-college').value.trim(),
+                password: document.getElementById('student-password').value.trim()
+            };
+
+            try {
+                const res = await window.stayfinderStore.registerStudentApi(studentData);
+                document.getElementById('student-form').classList.add('hidden');
+                document.getElementById('success-title').innerText = "Student Registration Submitted!";
+                document.getElementById('success-message').innerHTML = `
+                    Your student account for <strong>${studentData.email}</strong> has been created in the database and is currently in the <strong>Admin Approval Queue</strong> (Status: Pending).<br><br>
+                    <span class="text-amber-800 bg-amber-50 px-3 py-1 rounded-lg border border-amber-200 inline-block font-semibold">⚠️ Note: An Admin must approve your registration from the Admin Panel before you can log in.</span>
+                `;
+                document.getElementById('success-banner').classList.remove('hidden');
+            } catch (err) {
+                btn.disabled = false;
+                btn.innerHTML = `<span class="material-symbols-outlined">how_to_reg</span> Register Student Account`;
+                alert('Registration error: ' + err.message);
+            }
+        }
+
+        async function submitPropertyRegistration(e) {
+            e.preventDefault();
+            const btn = document.getElementById('owner-sub-btn');
+            btn.disabled = true;
+            btn.innerHTML = `<span class="material-symbols-outlined animate-spin">progress_activity</span> Submitting Listing...`;
+
+            const selectedAmenities = Array.from(document.querySelectorAll('input[name="amenities"]:checked')).map(cb => cb.value);
+
+            const propData = {
+                title: document.getElementById('prop-title').value.trim(),
+                category: document.getElementById('prop-category').value,
+                price: document.getElementById('prop-price').value.trim(),
+                location: document.getElementById('prop-location').value.trim(),
+                roomType: document.getElementById('prop-room-type').value,
+                ownerName: document.getElementById('prop-owner-name').value.trim(),
+                ownerPhone: document.getElementById('prop-owner-phone').value.trim(),
+                ownerEmail: document.getElementById('prop-owner-email').value.trim(),
+                image: document.getElementById('prop-image-url').value.trim(),
+                amenities: selectedAmenities,
+                description: document.getElementById('prop-description').value.trim()
+            };
+
+            try {
+                const res = await window.stayfinderStore.addPropertyApi(propData);
+                document.getElementById('owner-form').classList.add('hidden');
+                document.getElementById('success-title').innerText = "Property Submission Successful!";
+                document.getElementById('success-message').innerHTML = `
+                    Your property <strong>"${propData.title}"</strong> and Owner Account (<strong>${propData.ownerEmail}</strong>) have been registered in the database and are now in the <strong>Admin Approval Queue</strong>.<br><br>
+                    <span class="text-amber-800 bg-amber-50 px-3 py-1 rounded-lg border border-amber-200 inline-block font-semibold">⚠️ Note: Admin approval is required before you can log in to the Owner Portal or view the stay live on the site.</span>
+                `;
+                document.getElementById('success-banner').classList.remove('hidden');
+            } catch (err) {
+                btn.disabled = false;
+                btn.innerHTML = `<span class="material-symbols-outlined">send</span> Submit Property for Admin Approval`;
+                alert('Property submission error: ' + err.message);
+            }
+        }
+    </script>
+</body>
+
+</html>

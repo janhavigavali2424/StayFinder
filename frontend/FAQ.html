@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>FAQ & Help | StayFinder</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#004ac6",
+                        "secondary": "#4b41e1",
+                        "surface": "#f7f9fb",
+                        "surface-container-low": "#f2f4f6",
+                        "on-surface": "#191c1e",
+                        "on-surface-variant": "#434655",
+                        "outline-variant": "#c3c6d7"
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+    </style>
+    <script src="stayfinder-store.js"></script>
+</head>
+
+<body class="bg-surface text-on-surface">
+
+    <!-- Top Navigation Bar -->
+    <header class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-white/20 shadow-sm">
+        <nav class="flex justify-between items-center px-6 md:px-12 py-3 max-w-[1280px] mx-auto">
+            <a href="Home.html" class="flex items-center gap-2">
+                <div
+                    class="w-9 h-9 rounded-xl bg-primary text-white flex items-center justify-center font-bold text-lg">
+                    S</div>
+                <span class="text-xl font-bold text-primary">StayFinder</span>
+            </a>
+            <div class="hidden md:flex items-center gap-6">
+                <a class="text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors"
+                    href="Home.html">Home</a>
+                <a class="text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors"
+                    href="Services.html">Services</a>
+                <a class="text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors"
+                    href="About.html">About Us</a>
+                <a class="text-sm font-bold text-primary border-b-2 border-primary pb-1" href="FAQ.html">FAQ</a>
+                <a class="admin-only-link hidden text-sm font-bold text-secondary hover:underline flex items-center gap-1" style="display: none !important;"
+                    href="Admin.html">
+                    <span class="material-symbols-outlined text-base">admin_panel_settings</span> Admin Panel
+                </a>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="Login.html"
+                    class="text-sm font-semibold text-on-surface-variant hover:text-primary px-3 py-2">Login</a>
+                <a href="Registration.html"
+                    class="bg-primary text-white text-sm font-bold px-4 py-2 rounded-xl shadow-md">Register</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Header -->
+    <section class="pt-28 pb-12 px-6 bg-gradient-to-b from-primary/10 to-surface">
+        <div class="max-w-4xl mx-auto text-center">
+            <span
+                class="bg-primary/10 text-primary text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Help
+                & FAQ</span>
+            <h1 class="text-3xl md:text-5xl font-extrabold text-on-surface mt-3">Frequently Asked Questions</h1>
+            <p class="text-sm md:text-base text-on-surface-variant mt-3">
+                Learn how registration, admin verification, category filtering, and booking work on StayFinder.
+            </p>
+        </div>
+    </section>
+
+    <!-- Accordion FAQ List -->
+    <section class="py-12 px-6 max-w-3xl mx-auto space-y-4">
+        <div class="glass-card rounded-2xl overflow-hidden p-6 border border-outline-variant/30">
+            <h3 class="font-bold text-lg text-on-surface mb-2">How does Property Registration & Approval work?</h3>
+            <p class="text-xs text-on-surface-variant leading-relaxed">
+                When an owner registers a property on <a href="Registration.html"
+                    class="text-primary font-bold hover:underline">Registration.html</a>, it goes directly to our
+                <strong class="text-secondary font-bold">Admin Verification Control Desk</strong> (Status: Pending
+                Approval). The Admin reviews it and clicks <strong>Approve</strong>, which immediately makes the
+                property visible publicly on the <a href="Home.html" class="text-primary font-bold hover:underline">Home
+                    Page</a>!
+            </p>
+        </div>
+
+        <div class="glass-card rounded-2xl overflow-hidden p-6 border border-outline-variant/30">
+            <h3 class="font-bold text-lg text-on-surface mb-2">How can I filter properties by Category?</h3>
+            <p class="text-xs text-on-surface-variant leading-relaxed">
+                On the <a href="Home.html" class="text-primary font-bold hover:underline">Home Page</a>, you will find
+                interactive category pills: <strong>Boys PG</strong>, <strong>Girls PG</strong>,
+                <strong>Co-Living</strong>, <strong>Private Apartment</strong>, and <strong>Luxury Studio</strong>.
+                Clicking any pill filters the live listing grid instantly without refreshing the page.
+            </p>
+        </div>
+
+        <div class="glass-card rounded-2xl overflow-hidden p-6 border border-outline-variant/30">
+            <h3 class="font-bold text-lg text-on-surface mb-2">Is there any brokerage or commission fee?</h3>
+            <p class="text-xs text-on-surface-variant leading-relaxed">
+                No, StayFinder is a direct portal connecting students and property owners. Browsing verified stays is
+                100% free for students.
+            </p>
+        </div>
+
+        <div class="glass-card rounded-2xl overflow-hidden p-6 border border-outline-variant/30">
+            <h3 class="font-bold text-lg text-on-surface mb-2">Where can I see my owner listings status?</h3>
+            <p class="text-xs text-on-surface-variant leading-relaxed">
+                Owners can visit the <a href="Owner Dashboard.html" class="text-primary font-bold hover:underline">Owner
+                    Dashboard</a> to check approval statuses, view tenant messages, and track listing performance.
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-outline-variant/30 py-8 px-6 mt-16">
+        <div
+            class="max-w-[1280px] mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-on-surface-variant">
+            <div class="flex items-center gap-2 font-bold text-primary text-sm">
+                <span>StayFinder</span> © 2026 Student Housing Platform
+            </div>
+            <div class="flex flex-wrap gap-4">
+                <a href="Home.html" class="hover:text-primary">Home</a>
+                <a href="Services.html" class="hover:text-primary">Services</a>
+                <a href="About.html" class="hover:text-primary">About Us</a>
+                <a href="FAQ.html" class="hover:text-primary font-bold text-primary">FAQ</a>
+                <a href="Admin.html" class="admin-only-link hidden hover:text-primary font-bold text-secondary">Admin
+                    Panel</a>
+                <a href="Registration.html" class="hover:text-primary">Register Property</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>
